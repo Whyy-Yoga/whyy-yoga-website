@@ -63,41 +63,20 @@
       color: #3e4c59;
     }
 
-    .slots {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-top: 30px;
+    .book-btn {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
     }
 
-    .slot {
-      background-color: #ffffff;
-      border: 2px solid #e0e0e0;
-      border-radius: 15px;
-      padding: 20px;
-      text-align: center;
-      transition: transform 0.2s;
-    }
-
-    .slot:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    }
-
-    .slot button {
+    .book-btn button {
       background-color: #64b6ac;
       color: white;
+      padding: 12px 25px;
+      font-size: 16px;
       border: none;
-      padding: 10px 20px;
       border-radius: 25px;
-      font-size: 14px;
       cursor: pointer;
-      margin-top: 10px;
-    }
-
-    .slot button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
     }
 
     .modal {
@@ -158,7 +137,6 @@
       cursor: pointer;
     }
 
-    /* Animation for the success message at the top */
     .success-message {
       display: none;
       position: fixed;
@@ -185,14 +163,16 @@
   <header>
     <div class="logo">
       <i class="fas fa-leaf"></i>
-      whyy_yoga
+      why_yoga
       <i class="fas fa-child"></i>
     </div>
   </header>
 
   <div class="container">
-    <h2>Book Your Yoga Slot for Today 🧘</h2>
-    <div class="slots" id="slotsContainer"></div>
+    <h2>Book Your Yoga Slot 🧘</h2>
+    <div class="book-btn">
+      <button onclick="openForm()">Book a Slot</button>
+    </div>
     <div id="successMessage" class="success-message"></div>
   </div>
 
@@ -209,6 +189,10 @@
         <option value="Female">Female</option>
         <option value="Other">Other</option>
       </select>
+      <input type="date" id="userDate" required min="" />
+      <select id="userTime" required>
+        <option value="">Select Time</option>
+      </select>
       <button onclick="bookSlot()">Confirm Booking</button>
     </div>
   </div>
@@ -218,31 +202,27 @@
       "6:00 AM", "7:00 AM", "8:00 AM", "9:00 AM",
       "5:00 PM", "6:00 PM", "7:00 PM"
     ];
-
     const maxBookingsPerSlot = 5;
-    const bookings = {};
-    let selectedSlot = "";
+    const bookings = {}; // e.g., { "2025-05-01|6:00 AM": 3 }
 
-    function createSlotCard(time) {
-      const count = bookings[time] || 0;
-      const isFull = count >= maxBookingsPerSlot;
+    function openForm() {
+      const modal = document.getElementById('bookingModal');
+      modal.style.display = 'block';
 
-      return `
-        <div class="slot">
-          <h3>${time}</h3>
-          <p>${isFull ? 'Full' : `Available (${maxBookingsPerSlot - count} left)`}</p>
-          <button onclick="openForm('${time}')" ${isFull ? 'disabled' : ''}>Book Now</button>
-        </div>
-      `;
-    }
+      // Fill time options
+      const timeSelect = document.getElementById('userTime');
+      timeSelect.innerHTML = '<option value="">Select Time</option>';
+      slots.forEach(time => {
+        const option = document.createElement('option');
+        option.value = time;
+        option.textContent = time;
+        timeSelect.appendChild(option);
+      });
 
-    function renderSlots() {
-      document.getElementById('slotsContainer').innerHTML = slots.map(createSlotCard).join('');
-    }
-
-    function openForm(time) {
-      selectedSlot = time;
-      document.getElementById('bookingModal').style.display = 'block';
+      // Set min date to today
+      const dateInput = document.getElementById('userDate');
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.min = today;
     }
 
     function closeModal() {
@@ -260,52 +240,55 @@
       const name = document.getElementById('userName').value.trim();
       const age = document.getElementById('userAge').value.trim();
       const gender = document.getElementById('userGender').value;
+      const date = document.getElementById('userDate').value;
+      const time = document.getElementById('userTime').value;
 
-      if (!name || !age || !gender) {
+      if (!name || !age || !gender || !date || !time) {
         alert('Please fill all the fields.');
         return;
       }
 
-      bookings[selectedSlot] = (bookings[selectedSlot] || 0) + 1;
-      
-      // Display success message with a motivational quote
+      const key = `${date}|${time}`;
+      bookings[key] = (bookings[key] || 0) + 1;
+
+      if (bookings[key] > maxBookingsPerSlot) {
+        alert("This slot is full. Please choose another time.");
+        bookings[key]--; // Revert increment
+        return;
+      }
+
       const successMessage = document.getElementById('successMessage');
       successMessage.style.display = 'block';
-      successMessage.innerHTML = `
-        Thank you ${name}, your ${selectedSlot} slot is booked! 
-        <br>
-        "The journey of a thousand miles begins with one step." - Lao Tzu
-      `;
+      successMessage.innerHTML = `Thank you ${name}, your ${time} slot on ${date} is booked!<br>"Breathe deeply and begin your journey."`;
       successMessage.classList.add('fadeIn');
-      
-      sendToGoogleSheet(name, age, gender, selectedSlot);
+
+      sendToGoogleSheet(name, age, gender, time, date);
       closeModal();
+
       document.getElementById('userName').value = "";
       document.getElementById('userAge').value = "";
       document.getElementById('userGender').value = "";
-      renderSlots();
+      document.getElementById('userDate').value = "";
+      document.getElementById('userTime').value = "";
 
-      // Hide the success message after 5 seconds
       setTimeout(() => {
         successMessage.style.display = 'none';
       }, 5000);
     }
 
-    function sendToGoogleSheet(name, age, gender, time) {
-      const scriptURL = 'YOUR_GOOGLE_SCRIPT_WEB_APP_URL';
+    function sendToGoogleSheet(name, age, gender, time, date) {
+      const scriptURL = 'YOUR_GOOGLE_SCRIPT_WEB_APP_URL'; // <-- Replace this
       const formData = new FormData();
       formData.append('Name', name);
       formData.append('Age', age);
       formData.append('Gender', gender);
       formData.append('Time', time);
-      formData.append('Date', new Date().toLocaleDateString());
+      formData.append('Date', date);
 
       fetch(scriptURL, { method: 'POST', body: formData })
         .then(response => console.log('Success!', response))
         .catch(error => console.error('Error!', error.message));
     }
-
-    renderSlots();
   </script>
 </body>
 </html>
