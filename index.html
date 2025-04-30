@@ -203,6 +203,9 @@
       <h3>Enter Your Details</h3>
       <input type="text" id="userName" placeholder="Full Name" required />
       <input type="number" id="userAge" placeholder="Age" required />
+      <input type="text" id="Mobilenumber" placeholder="Phone Number" required />
+      <input type="text" id="email" placeholder="Email" required />
+
       <select id="userGender">
         <option value="">Select Gender</option>
         <option value="Male">Male</option>
@@ -260,8 +263,10 @@
       const name = document.getElementById('userName').value.trim();
       const age = document.getElementById('userAge').value.trim();
       const gender = document.getElementById('userGender').value;
+      const mobile = document.getElementById('Mobilenumber').value;
+      const em = document.getElementById('email').value;
 
-      if (!name || !age || !gender) {
+      if (!name || !age || !gender || !mobile || !em) {
         alert('Please fill all the fields.');
         return;
       }
@@ -278,11 +283,15 @@
       `;
       successMessage.classList.add('fadeIn');
       
-      sendToGoogleSheet(name, age, gender, selectedSlot);
+      sendToGoogleSheet(name, age, mobile, em, gender, selectedSlot);
+
       closeModal();
       document.getElementById('userName').value = "";
       document.getElementById('userAge').value = "";
       document.getElementById('userGender').value = "";
+      document.getElementById('Mobilenumber').value = "";
+      document.getElementById('email').value = "";
+
       renderSlots();
 
       // Hide the success message after 5 seconds
@@ -291,19 +300,21 @@
       }, 5000);
     }
 
-    function sendToGoogleSheet(name, age, gender, time) {
-      const scriptURL = 'https://script.google.com/macros/s/AKfycbwjmuRP7XmfM3TMWYmw3spyvqp627T0LCIsbjrAAmt1JtTdG0OE-UU0CGs7RdBXtCyW/exec';
-      const formData = new FormData();
-      formData.append('Name', name);
-      formData.append('Age', age);
-      formData.append('Gender', gender);
-      formData.append('Time', time);
-      formData.append('Date', new Date().toLocaleDateString());
+    function sendToGoogleSheet(name, age, mobile, em, gender, time) {
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbwjmuRP7XmfM3TMWYmw3spyvqp627T0LCIsbjrAAmt1JtTdG0OE-UU0CGs7RdBXtCyW/exec';
+  const formData = new FormData();
+  formData.append('Name', name);
+  formData.append('Age', age);
+  formData.append('PhoneNumber', mobile);
+  formData.append('Email', em);
+  formData.append('Gender', gender);
+  formData.append('Time', time);
+  formData.append('Date', new Date().toLocaleDateString());
 
-      fetch(scriptURL, { method: 'POST', body: formData })
-        .then(response => console.log('Success!', response))
-        .catch(error => console.error('Error!', error.message));
-    }
+  fetch(scriptURL, { method: 'POST', body: formData })
+    .then(response => console.log('Success!', response))
+    .catch(error => console.error('Error!', error.message));
+}
 
     renderSlots();
   </script>
