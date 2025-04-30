@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Us | Whyy Yoga</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #fdfcfb, #e2d1c3);
+      color: #333;
+      line-height: 1.6;
+    }
+
+    header {
+      background-color: #f4ede4;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      color: #64b6ac;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      margin-top: 0.5rem;
+      color: #555;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .section {
+      margin-bottom: 2rem;
+      padding: 2rem;
+      background: #ffffffc7;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .section:hover {
+      transform: scale(1.02);
+    }
+
+    h2 {
+      color: #64b6ac;
+      margin-bottom: 1rem;
+    }
+
+    a {
+      color: #c34c24;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      background: #f4ede4;
+      color: #666;
+    }
+
+    .button {
+      margin-top: 1rem;
+      padding: 10px 20px;
+      background: #64b6ac;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .button:hover {
+      background: #aa600d;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Welcome to Whyy Yoga</h1>
+    <p>Yoga that vibes with your soul, not just your scroll</p>
+  </header>
+
+  <div class="container">
+    <div class="section">
+      <h2>Meet Yashaswi Pandey</h2>
+      <p>
+        Founder of Whyy Yoga, Yashaswi is a certified yoga instructor (B.Sc Yoga, DSVV) and spiritual influencer with a passion for transformation through ancient wisdom. She is also a national debater who integrates Bhagavad Gita teachings into yoga practices for strength, flexibility, and mental clarity.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>Our Philosophy</h2>
+      <ul>
+        <li>– Soulful practice beyond physical poses</li>
+        <li>– Holistic wellness: mind, body, spirit</li>
+        <li>– Online sessions that reach your vibe, wherever you are</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Connect with Us</h2>
+      <p>
+        Ready to start your yoga journey? DM us on
+        <a href="https://www.instagram.com/whyy_yoga/" target="_blank">@whyy_yoga</a>
+        for special online classes and queries.
+      </p>
+      <button class="button" onclick="goToInstagram()">Join Now</button>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Whyy Yoga. All rights reserved.
+  </footer>
+
+  <script>
+    function goToInstagram() {
+      window.open('https://www.instagram.com/whyy_yoga/', '_blank');
+    }
+  </script>
+</body>
+</html>
