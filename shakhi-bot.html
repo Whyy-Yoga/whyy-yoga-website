@@ -1,194 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Shaki GPT</title>
+  <meta charset="UTF-8" />
+  <title>Shakhi GPT</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 20px;
-      background-color: #f0f4f7;
+      background-color: #e3f2fd;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center;
       min-height: 100vh;
     }
 
     .chat-container {
-      background: #ffffff;
-      padding: 30px;
+      background: #fff;
+      padding: 20px;
       border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       width: 100%;
       max-width: 600px;
+      display: flex;
+      flex-direction: column;
     }
 
     h2 {
       text-align: center;
-      color: #2f4f4f;
+      color: #1565c0;
+      margin-bottom: 15px;
+    }
+
+    .chat-box {
+      flex-grow: 1;
+      overflow-y: auto;
+      max-height: 450px;
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      line-height: 1.5;
+      word-wrap: break-word;
+      display: inline-block;
+    }
+
+    .user-msg {
+      align-self: flex-end;
+      background-color: #c8e6c9;
+      color: #1b5e20;
+      border-bottom-right-radius: 0;
+    }
+
+    .bot-msg {
+      align-self: flex-start;
+      background-color: #f1f8e9;
+      color: #33691e;
+      border-bottom-left-radius: 0;
+      border-left: 5px solid #81c784;
+    }
+
+    .typing {
+      font-style: italic;
+      color: #777;
+      font-size: 14px;
+      align-self: flex-start;
+      margin-left: 10px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
     }
 
     input[type="text"] {
-      width: 100%;
+      flex-grow: 1;
       padding: 12px;
-      margin-top: 15px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      border-radius: 10px;
+      border: 1px solid #90caf9;
       font-size: 16px;
     }
 
     button {
-      width: 100%;
-      margin-top: 10px;
-      padding: 12px;
-      background-color: #5b8c5a;
+      padding: 12px 20px;
+      background-color: #1565c0;
       color: white;
       font-size: 16px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
 
     button:hover {
-      background-color: #4a754a;
-    }
-
-    #responseBox {
-      display: none;
-      margin-top: 20px;
-      padding: 20px;
-      background-color: #f9f9f9;
-      border-left: 5px solid #5b8c5a;
-      border-radius: 10px;
-    }
-
-    #responseBox strong {
-      color: #5b8c5a;
+      background-color: #0d47a1;
     }
   </style>
 </head>
 <body>
-
   <div class="chat-container">
     <h2>Shakhi GPT</h2>
+    <div class="chat-box" id="chatBox"></div>
 
-    <input type="text" id="questionInput" placeholder="Ask your question about the Gita...">
-    <button id="askButton">Ask</button>
-
-    <div id="responseBox">
-      <strong>Answer:</strong>
-      <p id="responseText"></p>
+    <div class="input-group">
+      <input type="text" id="questionInput" placeholder="Ask your question about the Gita..." />
+      <button id="askButton">Ask</button>
     </div>
   </div>
 
   <script>
     const knowledgeBase = [
-      {
-        keywords: ["karma", "action", "duty", "work"],
-        answer: "Krishna emphasizes selfless action without attachment to results. This is the essence of Karma Yoga."
-      },
-      {
-        keywords: ["bhakti", "devotion", "love", "worship"],
-        answer: "Bhakti Yoga is the path of loving devotion. Through wholehearted love for God, one attains liberation."
-      },
-      {
-        keywords: ["jnana", "knowledge", "wisdom", "discrimination"],
-        answer: "Jnana Yoga is the path of knowledge — realizing the difference between the eternal soul and the temporary body."
-      },
-      {
-        keywords: ["raja", "meditation", "mind", "dhyana"],
-        answer: "Raja Yoga focuses on meditation and control of the mind to realize the Self."
-      },
-      {
-        keywords: ["soul", "atman", "self", "spirit"],
-        answer: "The soul is eternal, never born and never dies. It is untouched by death or destruction."
-      },
-      {
-        keywords: ["death", "rebirth", "reincarnation", "cycle"],
-        answer: "Just as we change clothes, the soul leaves one body and takes another. This cycle continues until liberation."
-      },
-      {
-        keywords: ["lust", "desire", "passion", "greed"],
-        answer: "Lust is the root of anger and delusion. It is born of passion and must be overcome for spiritual growth. (Gita 3.37)"
-      },
-      {
-        keywords: ["anger", "wrath", "rage"],
-        answer: "Anger arises from unfulfilled desire and leads to delusion and loss of reason. It must be controlled."
-      },
-      {
-        keywords: ["greed", "attachment", "possessiveness"],
-        answer: "Greed leads to bondage. Renunciation and moderation bring inner peace. (Gita 16.21)"
-      },
-      {
-        keywords: ["dharma", "responsibility", "righteousness"],
-        answer: "One must follow their dharma — their duty — without fear or selfish motives."
-      },
-      {
-        keywords: ["detachment", "renunciation", "vairagya"],
-        answer: "True detachment means performing duties without becoming emotionally entangled in outcomes."
-      },
-      {
-        keywords: ["fear", "worry", "stress", "anxiety"],
-        answer: "Krishna says rise above fear through devotion and understanding your eternal nature."
-      },
-      {
-        keywords: ["ego", "pride", "arrogance"],
-        answer: "Ego blinds us to the truth. Surrender and humility open the door to wisdom."
-      },
-      {
-        keywords: ["yoga", "union", "balance", "spiritual path"],
-        answer: "Yoga is union with the Divine through discipline of mind, body, and soul."
-      },
-      {
-        keywords: ["food", "eating", "diet"],
-        answer: "The Gita describes three types of food: sattvic (pure), rajasic (stimulating), and tamasic (impure). Choose sattvic for clarity."
-      },
-      {
-        keywords: ["maya", "illusion", "world", "temporary"],
-        answer: "The material world is temporary and illusory. Only the soul and God are eternal."
-      },
-      {
-        keywords: ["surrender", "faith", "trust"],
-        answer: "Surrender fully to the Divine. Krishna promises to protect and uplift those who surrender with faith. (Gita 18.66)"
-      },
-      {
-        keywords: ["moksha", "liberation", "freedom", "salvation"],
-        answer: "Moksha is liberation from the cycle of birth and death. It is attained through wisdom, devotion, and detachment."
-      },
-      {
-        keywords: ["betu"],
-        answer: "betu is yashaswi, bubua hai woh bhi chotu waala"
-      }
+      { keywords: ["karma", "action", "duty", "work"], answer: "Krishna emphasizes selfless action without attachment to results. This is the essence of Karma Yoga." },
+      { keywords: ["bhakti", "devotion", "love", "worship"], answer: "Bhakti Yoga is the path of loving devotion. Through wholehearted love for God, one attains liberation." },
+      { keywords: ["jnana", "knowledge", "wisdom", "discrimination"], answer: "Jnana Yoga is the path of knowledge — realizing the difference between the eternal soul and the temporary body." },
+      { keywords: ["raja", "meditation", "mind", "dhyana"], answer: "Raja Yoga focuses on meditation and control of the mind to realize the Self." },
+      { keywords: ["soul", "atman", "self", "spirit"], answer: "The soul is eternal, never born and never dies. It is untouched by death or destruction." },
+      { keywords: ["death", "rebirth", "reincarnation", "cycle"], answer: "Just as we change clothes, the soul leaves one body and takes another. This cycle continues until liberation." },
+      { keywords: ["lust", "desire", "passion", "greed"], answer: "Lust is the root of anger and delusion. It is born of passion and must be overcome for spiritual growth. (Gita 3.37)" },
+      { keywords: ["anger", "wrath", "rage"], answer: "Anger arises from unfulfilled desire and leads to delusion and loss of reason. It must be controlled." },
+      { keywords: ["greed", "attachment", "possessiveness"], answer: "Greed leads to bondage. Renunciation and moderation bring inner peace. (Gita 16.21)" },
+      { keywords: ["dharma", "responsibility", "righteousness"], answer: "One must follow their dharma — their duty — without fear or selfish motives." },
+      { keywords: ["detachment", "renunciation", "vairagya"], answer: "True detachment means performing duties without becoming emotionally entangled in outcomes." },
+      { keywords: ["fear", "worry", "stress", "anxiety"], answer: "Krishna says rise above fear through devotion and understanding your eternal nature." },
+      { keywords: ["ego", "pride", "arrogance"], answer: "Ego blinds us to the truth. Surrender and humility open the door to wisdom." },
+      { keywords: ["yoga", "union", "balance", "spiritual path"], answer: "Yoga is union with the Divine through discipline of mind, body, and soul." },
+      { keywords: ["food", "eating", "diet"], answer: "The Gita describes three types of food: sattvic (pure), rajasic (stimulating), and tamasic (impure). Choose sattvic for clarity." },
+      { keywords: ["maya", "illusion", "world", "temporary"], answer: "The material world is temporary and illusory. Only the soul and God are eternal." },
+      { keywords: ["surrender", "faith", "trust"], answer: "Surrender fully to the Divine. Krishna promises to protect and uplift those who surrender with faith. (Gita 18.66)" },
+      { keywords: ["moksha", "liberation", "freedom", "salvation"], answer: "Moksha is liberation from the cycle of birth and death. It is attained through wisdom, devotion, and detachment." },
+      { keywords: ["betu"], answer: "Betu is Yashaswi, bubua hai woh bhi chotu waala." }
     ];
 
     const askButton = document.getElementById('askButton');
     const questionInput = document.getElementById('questionInput');
-    const responseBox = document.getElementById('responseBox');
-    const responseText = document.getElementById('responseText');
+    const chatBox = document.getElementById('chatBox');
+
+    function addMessage(text, type) {
+      const message = document.createElement('div');
+      message.classList.add('message');
+      message.classList.add(type === 'user' ? 'user-msg' : 'bot-msg');
+      message.textContent = text;
+      chatBox.appendChild(message);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
 
     askButton.addEventListener('click', () => {
-      const userQuestion = questionInput.value.trim().toLowerCase();
+      const userText = questionInput.value.trim().toLowerCase();
+      if (!userText) return;
 
-      if (userQuestion === "") {
-        alert("Please enter a question.");
-        return;
-      }
+      addMessage(userText, 'user');
+      questionInput.value = "";
 
-      let foundAnswer = "I'm sorry, I couldn't find an answer to your question in the Gita knowledge base.";
+      const typing = document.createElement('div');
+      typing.classList.add('typing');
+      typing.textContent = "Shakhi is thinking...";
+      chatBox.appendChild(typing);
+      chatBox.scrollTop = chatBox.scrollHeight;
 
-      for (const entry of knowledgeBase) {
-        if (entry.keywords.some(keyword => userQuestion.includes(keyword))) {
-          foundAnswer = entry.answer;
-          break;
+      setTimeout(() => {
+        typing.remove();
+
+        let found = "I'm sorry, I couldn't find an answer to your question in the Gita knowledge base.";
+        for (const item of knowledgeBase) {
+          if (item.keywords.some(k => userText.includes(k))) {
+            found = item.answer;
+            break;
+          }
         }
-      }
 
-      responseText.textContent = foundAnswer;
-      responseBox.style.display = 'block';
+        addMessage(found, 'bot');
+      }, 3000);
+    });
+
+    // Allow Enter key to work too
+    questionInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        askButton.click();
+      }
     });
   </script>
-
 </body>
 </html>
