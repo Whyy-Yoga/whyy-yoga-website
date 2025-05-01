@@ -168,8 +168,8 @@
         }
       }
   
-      // Return match only if at least 2 words match
-      return bestScore >= 2 ? bestMatch[1] : 'not_found';
+      // Return match only if at least 3 words match
+      return bestScore >= 3 ? bestMatch[1] : 'not_found';
     }
   
     async function getSheetAnswer(q) {
