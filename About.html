@@ -6,6 +6,9 @@
   <title>About Us | Whyy Yoga</title>
   <link href="https://fonts.googleapis.com/css2?family=Sacramento&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <link rel="stylesheet" href="ai-pop-up-button.css">
+  <link rel="stylesheet" href="nav-bar.css">
   <style>
     * {
       margin: 0;
@@ -18,12 +21,6 @@
       background: linear-gradient(135deg, #fdfcfb, #e2d1c3);
       color: #333;
       line-height: 1.6;
-    }
-    header {
-      background-color: #fff;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     .logo {
       font-family: 'Sacramento', cursive;
@@ -124,32 +121,6 @@
 
     .button:hover {
       background: #aa600d;
-    }
-    nav {
-      background-color: #64b6ac;
-      overflow: hidden;
-    }
-
-    nav ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center; /* This centers the items */
-    }
-
-    nav ul li {
-      padding: 1%;
-    }
-
-    nav ul li a {
-      color: white;
-      text-decoration: none;
-      display: block;
-    }
-
-    nav ul li a:hover {
-      background-color: #575757;
     }
      /* Flip animation on hover */
      .flip-card:hover .flip-card-inner {
@@ -306,5 +277,33 @@
       window.open('https://www.instagram.com/whyy_yoga/', '_blank');
     }
   </script>
+  <!-- Instagram CTA -->
+  <section class="py-12 text-center">
+    <h3 class="text-2xl font-semibold text-theme mb-4">Follow Us on Instagram</h3>
+    <p class="text-gray-700 mb-6">@<strong>whyy_yoga</strong> for daily inspiration and yoga tips</p>
+    <a href="https://instagram.com/whyy_yoga" target="_blank" class="inline-block bg-theme text-white px-6 py-2 rounded-full hover:bg-theme-dark transition">Visit Instagram</a>
+  </section>
+ <!-- Floating Ask Button -->
+ <button id="gitaBotButton" onclick="openPopup()">
+      <img id="popup_button" src="krishna.jpg" alt=""></button>
+
+ <!-- Popup Overlay -->
+ <div id="popupOverlay">
+   <button id="closePopup" onclick="closePopup()">×</button>
+   <iframe id="gitaPopupFrame" src="shakhi-bot.html"></iframe>
+ </div>
+
+ <script>
+   function openPopup() {
+     const overlay = document.getElementById('popupOverlay');
+     const iframe = document.getElementById('gitaPopupFrame');
+     iframe.style.animation = 'popupIn 0.4s ease forwards';
+     overlay.style.display = 'flex';
+   }
+
+   function closePopup() {
+     document.getElementById('popupOverlay').style.display = 'none';
+   }
+ </script>
 </body>
 </html>
