@@ -14,13 +14,6 @@
       color: #333;
     }
 
-    header {
-      background-color: #fff;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
     .logo {
       font-family: 'Sacramento', cursive;
       font-size: 40px;
@@ -180,32 +173,6 @@
       100% { opacity: 1; }
     }
 
-    nav {
-      background-color: #64b6ac;
-      overflow: hidden;
-    }
-
-    nav ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center; /* This centers the items */
-    }
-
-    nav ul li {
-      padding: 1%;
-    }
-
-    nav ul li a {
-      color: white;
-      text-decoration: none;
-      display: block;
-    }
-
-    nav ul li a:hover {
-      background-color: #575757;
-    }
   </style>
 </head>
 <body>
@@ -353,5 +320,27 @@
 
     renderSlots();
   </script>
+   <!-- Floating Ask Button -->
+ <button id="gitaBotButton" onclick="openPopup()">
+  <img id="popup_button" src="krishna.jpg" alt=""></button>
+
+<!-- Popup Overlay -->
+<div id="popupOverlay">
+<button id="closePopup" onclick="closePopup()">×</button>
+<iframe id="gitaPopupFrame" src="shakhi-bot.html"></iframe>
+</div>
+
+<script>
+function openPopup() {
+ const overlay = document.getElementById('popupOverlay');
+ const iframe = document.getElementById('gitaPopupFrame');
+ iframe.style.animation = 'popupIn 0.4s ease forwards';
+ overlay.style.display = 'flex';
+}
+
+function closePopup() {
+ document.getElementById('popupOverlay').style.display = 'none';
+}
+</script>
 </body>
 </html>
