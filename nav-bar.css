@@ -1,3 +1,12 @@
+.stick_it {
+  position: fixed;
+  width: 100%;
+  z-index: 500;
+  top: 0;
+}
+.margin{
+margin-top: 150px;
+}
 header {
     background-color: #ffffff;
     padding: 20px;
@@ -16,6 +25,7 @@ header {
     font-size: 1.1rem;
   }
   nav {
+    margin-top: 90px;
     background-color: #64b6ac;
     overflow: hidden;
   }
