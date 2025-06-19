@@ -73,9 +73,9 @@ header {
 /* Hamburger button */
 .hamburger {
   position: absolute;
-  top: 20px;
+  top: 21px;
   left: 20px;
-  font-size: 28px;
+  font-size: 40px;
   background: none;
   border: none;
   color: #64b6ac;
