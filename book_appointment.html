@@ -179,21 +179,26 @@
   </style>
 </head>
 <body>
-  <header class="stick_it">
-    <div class="logo">
-      <i class="fas fa-leaf"></i>
-      whyy_yoga
-      <i class="fas fa-child"></i>
-    </div>
-  </header>
-  <nav class="stick_it">
-    <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="About.html">About</a></li>
-        <li><a href="book_appointment.html">Book a Session</a></li>
-        <li><a href="contactus.html">Contact</a></li>
-      </ul>
-  </nav>
+  <!-- Overlay for mobile sidebar -->
+<div id="overlay" onclick="closeNav()"></div>
+
+<!-- Header with logo + hamburger -->
+<header class="stick_it">
+  <button class="hamburger" onclick="openNav()">☰</button>
+  <div class="logo">
+    <i class="fas fa-leaf"></i> whyy_yoga <i class="fas fa-child"></i>
+  </div>
+</header>
+
+<!-- ✅ DESKTOP NAV placed outside the header -->
+<nav class="desktop-nav">
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="About.html">About</a></li>
+    <li><a href="book_appointment.html">Book a Session</a></li>
+    <li><a href="contactus.html">Contact</a></li>
+  </ul>
+</nav>
 
   <div class="container margin">
     <h2>Book Your Yoga Slot for Today 🧘</h2>
@@ -366,6 +371,17 @@ function openPopup() {
 function closePopup() {
  document.getElementById('popupOverlay').style.display = 'none';
 }
+</script>
+<script>
+  function openNav() {
+    document.getElementById("mySidenav").style.width = "250px";
+    document.getElementById("overlay").style.display = "block";
+  }
+
+  function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("overlay").style.display = "none";
+  }
 </script>
 </body>
 </html>
