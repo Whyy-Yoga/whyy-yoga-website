@@ -109,19 +109,28 @@
   </video>
 
   <!-- Header -->
- <!-- Overlay for closing the side nav -->
+<!-- Overlay for mobile sidebar -->
 <div id="overlay" onclick="closeNav()"></div>
 
+<!-- Header with logo + hamburger -->
 <header class="stick_it">
   <button class="hamburger" onclick="openNav()">☰</button>
   <div class="logo">
-    <i class="fas fa-leaf"></i>
-    whyy_yoga
-    <i class="fas fa-child"></i>
+    <i class="fas fa-leaf"></i> whyy_yoga <i class="fas fa-child"></i>
   </div>
 </header>
 
-<!-- Slide-in Side Nav -->
+<!-- ✅ DESKTOP NAV placed outside the header -->
+<nav class="desktop-nav">
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="About.html">About</a></li>
+    <li><a href="book_appointment.html">Book a Session</a></li>
+    <li><a href="contactus.html">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- Mobile sidebar nav (only shown on mobile) -->
 <div id="mySidenav" class="side-nav">
   <button class="closebtn" onclick="closeNav()">×</button>
   <a href="index.html">Home</a>
@@ -129,6 +138,7 @@
   <a href="book_appointment.html">Book a Session</a>
   <a href="contactus.html">Contact</a>
 </div>
+
 
   <!-- Hero Section -->
   <section class="py-20 px-4 text-center margin">
