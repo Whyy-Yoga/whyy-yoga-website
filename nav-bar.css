@@ -94,7 +94,7 @@ header {
   overflow-x: hidden;
   transition: 0.3s;
   padding-top: 60px;
-  z-index: 1000;
+  z-index: 1200;
 }
 
 .side-nav a {
