@@ -82,6 +82,22 @@
       pointer-events: none;
       /* so clicks pass through */
     }
+
+    @keyframes clickBounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .nav-click-effect {
+      animation: clickBounce 0.4s ease-in-out 2;
+    }
   </style>
 </head>
 
@@ -93,21 +109,26 @@
   </video>
 
   <!-- Header -->
-  <header class="stick_it">
-    <div class="logo">
-      <i class="fas fa-leaf"></i>
-      whyy_yoga
-      <i class="fas fa-child"></i>
-    </div>
-  </header>
-  <nav class="stick_it">
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="About.html">About</a></li>
-      <li><a href="book_appointment.html">Book a Session</a></li>
-      <li><a href="contactus.html">Contact</a></li>
-    </ul>
-  </nav>
+ <!-- Overlay for closing the side nav -->
+<div id="overlay" onclick="closeNav()"></div>
+
+<header class="stick_it">
+  <button class="hamburger" onclick="openNav()">☰</button>
+  <div class="logo">
+    <i class="fas fa-leaf"></i>
+    whyy_yoga
+    <i class="fas fa-child"></i>
+  </div>
+</header>
+
+<!-- Slide-in Side Nav -->
+<div id="mySidenav" class="side-nav">
+  <button class="closebtn" onclick="closeNav()">×</button>
+  <a href="index.html">Home</a>
+  <a href="About.html">About</a>
+  <a href="book_appointment.html">Book a Session</a>
+  <a href="contactus.html">Contact</a>
+</div>
 
   <!-- Hero Section -->
   <section class="py-20 px-4 text-center margin">
@@ -170,10 +191,67 @@
       document.getElementById('popupOverlay').style.display = 'none';
     }
   </script>
+<script>
+  window.onload = function () {
+    const character = document.getElementById('yogiCharacter');
+    const target = document.querySelector('nav ul li:nth-child(3) a'); // Book a Session link
+
+    function animateCharacter() {
+      const rect = target.getBoundingClientRect();
+      const targetX = rect.left + rect.width / 2 - 40;
+
+      // Reset instantly to left
+      character.style.transition = 'none';
+      character.style.left = '-100px';
+
+      // Force reflow to restart transition
+      void character.offsetWidth;
+
+      // Start walking to target
+      character.style.transition = 'left 4s linear';
+      character.style.left = `${targetX}px`;
+
+      // Trigger bounce right when it reaches
+      setTimeout(() => {
+        target.classList.add('nav-click-effect');
+
+        // Remove bounce class after bounce completes (0.4s x 2 = 0.8s)
+        setTimeout(() => {
+          target.classList.remove('nav-click-effect');
+
+          // Immediately start again
+          animateCharacter();
+        }, 800);
+      }, 4000); // 4s = duration of walking
+    }
+
+    // Start the loop
+    animateCharacter();
+  };
+</script>
+
   <!-- Footer -->
   <footer class="bg-gray-100 py-6 text-center text-gray-600 text-sm">
     <p>&copy; 2025 whyy_yoga. All rights reserved.</p>
   </footer>
+
+    <!-- for the animated video for clicking animation for book a appointment button, but now the nav bar is converted into hamburger menu -->
+ <!-- <img src="guddu.png"
+     id="yogiCharacter"
+     style="position: absolute; top: 100px; left: -100px; width: 80px; z-index: 1000; transition: left 4s linear;" /> -->
+<script>
+  function openNav() {
+    document.getElementById("mySidenav").style.width = "250px";
+    document.getElementById("overlay").style.display = "block";
+  }
+
+  function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("overlay").style.display = "none";
+  }
+</script>
+
+
 
 </body>
 
