@@ -12,6 +12,7 @@
   <!-- Ai-style sheet -->
   <link rel="stylesheet" href="ai-pop-up-button.css">
   <link rel="stylesheet" href="nav-bar.css">
+  <link rel="stylesheet" href="magic_card.css">
 
   <style>
     :root {
@@ -189,6 +190,22 @@
     <iframe id="gitaPopupFrame" src="shakhi-bot.html"></iframe>
   </div>
 
+  <!-- Floating Magic Card Button -->
+<button id="magicCardButton" onclick="openWisdomPopup()">
+  <img id="popup_card_button" src="mood_whyy_yoga.png" alt="Daily Wisdom" style="width: 60px; border-radius: 50%;">
+</button>
+
+<!-- Wisdom Popup -->
+<div id="wisdomPopupOverlay">
+  <button id="closeWisdomPopup" onclick="closeWisdomPopup()">×</button>
+  <iframe id="wisdomPopupFrame" src="magic_card.html"></iframe>
+</div>
+<!-- Wisdom Popup -->
+<div id="wisdomPopupOverlay">
+  <button id="closeWisdomPopup" onclick="closeWisdomPopup()">×</button>
+  <iframe id="wisdomPopupFrame" src="wisdom-card.html"></iframe>
+</div>
+
   <script>
     function openPopup() {
       const overlay = document.getElementById('popupOverlay');
@@ -258,6 +275,19 @@
   function closeNav() {
     document.getElementById("mySidenav").style.width = "0";
     document.getElementById("overlay").style.display = "none";
+  }
+  
+</script>
+<script>
+  function openWisdomPopup() {
+    const overlay = document.getElementById('wisdomPopupOverlay');
+    const iframe = document.getElementById('wisdomPopupFrame');
+    iframe.style.animation = 'popupIn 0.4s ease forwards';
+    overlay.style.display = 'flex';
+  }
+
+  function closeWisdomPopup() {
+    document.getElementById('wisdomPopupOverlay').style.display = 'none';
   }
 </script>
 

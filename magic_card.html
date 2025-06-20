@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Whyy Yoga – Daily Wisdom Pill</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background: #fffef6;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      margin: 0;
+      color: #333;
+      text-align: center;
+    }
+
+    .card {
+      max-width: 600px;
+      margin: auto;
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      box-sizing: border-box;
+    }
+
+    .card h2 {
+      color: #8146b2;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .pill-section {
+      margin-bottom: 15px;
+    }
+
+    .pill-section strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #222;
+      font-size: 16px;
+    }
+
+    .pill-section p {
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    /* Mood buttons container */
+    #moodOptions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+      padding: 0 10px;
+    }
+
+    /* Circle mood buttons */
+    #moodOptions button {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: none;
+      background: #8146b2;
+      color: #fff;
+      font-size: 12px;
+      text-align: center;
+      line-height: 1.2;
+      cursor: pointer;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease, background 0.2s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    #moodOptions button:hover {
+      background: #5e2b89;
+      transform: scale(1.05);
+    }
+
+    .back-btn {
+      margin-top: 20px;
+      padding: 10px 18px;
+      border: none;
+      background: #eee;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #555;
+      font-size: 14px;
+    }
+
+    .back-btn:hover {
+      background: #ddd;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 18px;
+      }
+
+      .card h2 {
+        font-size: 20px;
+      }
+
+      .pill-section p {
+        font-size: 14px;
+      }
+
+      #moodOptions button {
+        width: 100px;
+        height: 100px;
+        font-size: 11px;
+        padding: 6px;
+      }
+
+      .back-btn {
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card" id="wisdomCard">
+    <h2>How are you feeling today?</h2>
+    <div id="moodOptions"></div>
+  </div>
+
+  <div class="footer">
+    © Whyy Yoga | 700 Days of Healing
+  </div>
+
+  <script>
+    let data = [];
+
+    async function fetchData() {
+      try {
+        const response = await fetch('whyy_mood_card.json');
+        data = await response.json();
+
+        const uniqueMoods = [...new Set(data.map(card => card.mood))];
+        const moodContainer = document.getElementById("moodOptions");
+
+        uniqueMoods.forEach(mood => {
+          const btn = document.createElement("button");
+          btn.textContent = mood;
+          btn.onclick = () => showMoodCard(mood);
+          moodContainer.appendChild(btn);
+        });
+      } catch (error) {
+        document.getElementById('wisdomCard').innerHTML = `<h2>Error loading data.</h2><p>Please try again later.</p>`;
+      }
+    }
+
+    function showMoodCard(mood) {
+      const card = data.find(entry => entry.mood === mood);
+      if (!card) {
+        document.getElementById('wisdomCard').innerHTML = `
+          <h2>No card found for mood: ${mood}</h2>
+          <button class="back-btn" onclick="location.reload()">⬅ Choose Another Mood</button>
+        `;
+        return;
+      }
+
+      document.getElementById('wisdomCard').innerHTML = `
+        <h2>${card.mood}</h2>
+
+        <div class="pill-section">
+          <strong>🕉 Gita Shloka:</strong>
+          <p>${card.gita}</p>
+        </div>
+
+        <div class="pill-section">
+          <strong>🪔 Thought:</strong>
+          <p>${card.thought}</p>
+        </div>
+
+        <div class="pill-section">
+          <strong>✨ Whisper Affirmation:</strong>
+          <p><em>${card.whisper}</em></p>
+        </div>
+
+        <div class="pill-section">
+          <strong>🪷 Practice:</strong>
+          <p>${card.practice}</p>
+        </div>
+
+        <button class="back-btn" onclick="location.reload()">⬅ Choose Another Mood</button>
+      `;
+    }
+
+    fetchData();
+  </script>
+</body>
+</html>
