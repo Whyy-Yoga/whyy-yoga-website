@@ -71,3 +71,52 @@
   border: 1px solid;
   border-radius: 30px;
   }
+
+  #popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+#popupOverlay iframe {
+  width: 90%;
+  height: 90vh;
+  border-radius: 16px;
+  border: none;
+  background: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+#closePopup {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  background: white;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10001;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+#closePopup:hover {
+  background-color: #f87171; /* light red hover */
+  transform: scale(1.1);
+}
+
+#closePopup svg {
+  width: 20px;
+  height: 20px;
+  color: #333;
+}
