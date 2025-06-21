@@ -2,30 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Shakhi GPT</title>
+  <title>Sakhi GPT</title>
   <style>
-    /* (UI unchanged, so styles are kept as is) */
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: 0;
       background-color: #e3f2fd;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 400px;
+      height: 100vh;
+      overflow: hidden;
     }
 
     .chat-container {
       background: #fff;
-      padding: 20px;
       border-radius: 15px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      width: 100%;
+      width: 95%;
       max-width: 600px;
+      height: 95vh;
       display: flex;
       flex-direction: column;
-      max-height: 420px;
+      padding: 20px;
     }
 
     h2 {
@@ -37,11 +41,11 @@
     .chat-box {
       flex-grow: 1;
       overflow-y: auto;
-      max-height: 450px;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       display: flex;
       flex-direction: column;
       gap: 10px;
+      padding-right: 5px;
     }
 
     .message {
@@ -74,6 +78,66 @@
       font-size: 14px;
       align-self: flex-start;
       margin-left: 10px;
+    }
+
+    .suggestions-container {
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+      min-height: 50px;
+      max-height: 50px;
+      margin-bottom: 10px;
+      padding: 5px 0;
+    }
+
+    .suggestions-container::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .suggestions-container::-webkit-scrollbar-thumb {
+      background: #90caf9;
+      border-radius: 10px;
+    }
+
+    .suggestion-chip {
+      background-color: #e1f5fe;
+      color: #0277bd;
+      border: 1px solid #81d4fa;
+      padding: 8px 14px;
+      border-radius: 20px;
+      white-space: nowrap;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background-color 0.2s ease;
+    }
+
+    .suggestion-chip:hover {
+      background-color: #b3e5fc;
+    }
+
+    .refresh-chip {
+      background-color: #fff3e0;
+      border: 1px solid #ffb74d;
+      border-radius: 50%;
+      padding: 8px;
+      min-width: 40px;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background-color 0.3s ease;
+    }
+
+    .refresh-chip:hover {
+      background-color: #ffe0b2;
+    }
+
+    .refresh-chip svg {
+      fill: #ef6c00;
+      width: 20px;
+      height: 20px;
     }
 
     .input-group {
@@ -110,6 +174,8 @@
     <h2>Sakhi GPT</h2>
     <div class="chat-box" id="chatBox"></div>
 
+    <div class="suggestions-container" id="suggestionsBar"></div>
+
     <div class="input-group">
       <input type="text" id="questionInput" placeholder="Ask your question about the Gita..." />
       <button id="askButton">Ask</button>
@@ -118,15 +184,16 @@
 
   <script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbwvHFvKMNVGCN1_XkwFs1RCePzhxo8mLN3qFP5fE0qPOJXmMNCc36x-IjW7tPNoiTiqgg/exec";
-  
     let isAwaitingAnswer = false;
     let pendingQ = '';
-    let allQA = []; // Store all sheet Q&A
-  
+    let allQA = [];
+    let suggestionIndex = 0;
+
     const chatBox = document.getElementById('chatBox');
     const askBtn = document.getElementById('askButton');
     const input = document.getElementById('questionInput');
-  
+    const suggestionsBar = document.getElementById('suggestionsBar');
+
     function appendMsg(text, cls) {
       const div = document.createElement('div');
       div.classList.add('message', cls);
@@ -134,7 +201,7 @@
       chatBox.appendChild(div);
       chatBox.scrollTop = chatBox.scrollHeight;
     }
-  
+
     function addTyping() {
       const t = document.createElement('div');
       t.classList.add('typing');
@@ -143,22 +210,73 @@
       chatBox.scrollTop = chatBox.scrollHeight;
       return t;
     }
-  
+
     async function fetchAllQA() {
       try {
         const res = await fetch(`${scriptURL}?action=all`);
         const json = await res.json();
-        allQA = json.data || [];
+        allQA = (json.data || []).slice(1); // Skip header row
+        renderSuggestions();
       } catch (e) {
         console.warn("Could not fetch full sheet data", e);
       }
     }
-  
+
+    function renderSuggestions() {
+      suggestionsBar.innerHTML = '';
+      const allQuestions = [...new Set(allQA.map(pair => pair[0]))];
+      const suggestionsToShow = allQuestions.slice(suggestionIndex, suggestionIndex + 3);
+
+      suggestionsToShow.forEach(q => {
+        const chip = document.createElement('div');
+        chip.className = 'suggestion-chip';
+        chip.textContent = q;
+        chip.onclick = () => {
+          input.value = q;
+          handleInput();
+        };
+        suggestionsBar.appendChild(chip);
+      });
+
+      const refresh = document.createElement('div');
+      refresh.className = 'refresh-chip';
+      refresh.onclick = () => {
+        suggestionIndex += 3;
+        if (suggestionIndex >= allQuestions.length) suggestionIndex = 0;
+        renderSuggestions();
+      };
+      refresh.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M17.65 6.35A7.95 7.95 0 0012 4V1L7 6l5 5V7a6 6 0 11-6 6H5a7 7 0 107.75-6.75z"/>
+        </svg>
+      `;
+      suggestionsBar.appendChild(refresh);
+    }
+
+    async function getSheetAnswer(q) {
+      try {
+        const res = await fetch(`${scriptURL}?action=get&question=${encodeURIComponent(q)}`);
+        const text = await res.text();
+        return text === 'not_found' ? fuzzyMatch(q) : text;
+      } catch {
+        return fuzzyMatch(q);
+      }
+    }
+
+    async function addSheetQA(q, a) {
+      try {
+        await fetch(`${scriptURL}?action=add&question=${encodeURIComponent(q)}&answer=${encodeURIComponent(a)}`);
+        allQA.push([q, a]);
+      } catch (e) {
+        console.warn("Failed to save to sheet", e);
+      }
+    }
+
     function fuzzyMatch(userQ) {
       const userWords = userQ.toLowerCase().split(/\s+/);
       let bestMatch = null;
       let bestScore = 0;
-  
+
       for (let [q, a] of allQA) {
         const qWords = q.toLowerCase().split(/\s+/);
         let matchCount = userWords.filter(w => qWords.includes(w)).length;
@@ -167,41 +285,18 @@
           bestMatch = [q, a];
         }
       }
-  
-      // Return match only if at least 3 words match
+
       return bestScore >= 3 ? bestMatch[1] : 'not_found';
     }
-  
-    async function getSheetAnswer(q) {
-      try {
-        const res = await fetch(`${scriptURL}?action=get&question=${encodeURIComponent(q)}`);
-        const text = await res.text();
-        if (text === 'not_found') {
-          return fuzzyMatch(q);
-        }
-        return text;
-      } catch {
-        return fuzzyMatch(q);
-      }
-    }
-  
-    async function addSheetQA(q, a) {
-      try {
-        await fetch(`${scriptURL}?action=add&question=${encodeURIComponent(q)}&answer=${encodeURIComponent(a)}`);
-        allQA.push([q, a]); // Update local cache
-      } catch (e) {
-        console.warn("Failed to save to sheet", e);
-      }
-    }
-  
+
     async function handleInput() {
       const rawText = input.value;
       const text = rawText.trim();
       if (!text) return;
-  
+
       appendMsg(text, 'user-msg');
       input.value = '';
-  
+
       if (isAwaitingAnswer) {
         const answer = text;
         await addSheetQA(pendingQ, answer);
@@ -210,11 +305,11 @@
         pendingQ = '';
         return;
       }
-  
+
       const typing = addTyping();
       const sheetAns = await getSheetAnswer(text);
       typing.remove();
-  
+
       if (sheetAns === 'not_found') {
         appendMsg("I don't know the answer to that yet. Can you please tell me?", 'bot-msg');
         isAwaitingAnswer = true;
@@ -223,13 +318,11 @@
         appendMsg(sheetAns, 'bot-msg');
       }
     }
-  
+
     askBtn.addEventListener('click', handleInput);
     input.addEventListener('keypress', e => { if (e.key === 'Enter') handleInput(); });
-  
-    // Initial fetch of all Q&A for fuzzy matching
+
     fetchAllQA();
   </script>
-  
 </body>
 </html>
