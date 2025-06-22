@@ -1,0 +1,301 @@
+<!-- accessibility-popup.html -->
+<div id="accessibility-popup-wrapper">
+  <button id="accessibility-btn" title="Accessibility">
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white">
+      <path
+        d="M12 2C11.17 2 10.5 2.67 10.5 3.5C10.5 4.33 11.17 5 12 5C12.83 5 13.5 4.33 13.5 3.5C13.5 2.67 12.83 2 12 2ZM20.5 8H16.1C14.9 8 13.7 8.5 12.9 9.3L12 10.2L11.1 9.3C10.3 8.5 9.1 8 7.9 8H3.5V10H7.9C8.4 10 8.9 10.2 9.3 10.6L11 12.3V21H13V12.3L14.7 10.6C15.1 10.2 15.6 10 16.1 10H20.5V8Z" />
+    </svg>
+  </button>
+
+  <div id="accessibility-popup" style="display: none;">
+    <h2 class="popup-title">Accessibility Tools</h2>
+    <div class="btn-group">
+      <button id="font-plus">A+</button>
+      <button id="font-minus">A-</button>
+      <button id="font-reset">Reset</button>
+    </div>
+    <div class="btn-group">
+      <button id="dark-mode-toggle">🌙 Dark</button>
+      <button id="reading-line-toggle">📖 Reading Line</button>
+    </div>
+    <div class="btn-group">
+      <button id="underline-toggle">🔗 Underline Links</button>
+      <button id="translate-btn">🌐 Hindi/English</button>
+      <button id="voice-toggle">🎙️ Voice Ctrl</button>
+    </div>
+  </div>
+
+  <style>
+    :root {
+      --bg-light: #fff;
+      --text-light: #333;
+      --bg-dark: #111;
+      --text-dark: #fff;
+    }
+
+    body.dark-mode {
+      background-color: var(--bg-dark) !important;
+      color: var(--text-dark) !important;
+    }
+
+    body.dark-mode #accessibility-popup {
+      background-color: #222 !important;
+      color: white !important;
+    }
+
+    body.dark-mode #accessibility-popup button {
+      background-color: #444 !important;
+      color: white !important;
+    }
+
+    #accessibility-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #64b6ac;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      z-index: 9999;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s ease;
+    }
+
+    #accessibility-btn svg {
+      width: 28px;
+      height: 28px;
+      fill: white;
+    }
+
+
+    #accessibility-btn:hover {
+      transform: scale(1.1);
+    }
+
+    #accessibility-popup {
+      position: fixed;
+      bottom: 90px;
+      left: 20px;
+      background: var(--bg-light);
+      color: var(--text-light);
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+      font-family: Arial, sans-serif;
+      width: 250px;
+    }
+
+
+    .popup-title {
+      font-size: 16px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      justify-content: center;
+    }
+
+    #accessibility-popup button {
+      flex: 1 1 auto;
+      padding: 6px 8px;
+      font-size: 13px;
+      border: none;
+      border-radius: 6px;
+      background-color: #f0f0f0;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    #accessibility-popup button:hover {
+      background-color: #d1d1d1;
+    }
+
+    #accessibility-popup button.active {
+      background-color: #64b6ac !important;
+      color: white !important;
+    }
+
+    .underline-links a {
+      text-decoration: underline !important;
+    }
+
+    #reading-line {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      width: 100vw;
+      background: red;
+      z-index: 9999;
+      pointer-events: none;
+      display: none;
+    }
+  </style>
+
+  <div id="reading-line"></div>
+</div>
+
+<script>
+  let popupVisible = false;
+  let currentFontSize = 100;
+  let translated = false;
+  let readingLineActive = false;
+  let voiceRecognitionActive = false;
+  let recognition;
+
+  const map = {
+    "Home": "होम",
+    "About": "परिचय",
+    "Book a Session": "सत्र बुक करें",
+    "Contact": "संपर्क करें",
+    "Reconnect with Yourself Through Yoga": "योग के माध्यम से अपने आप से जुड़ें",
+    "Welcome to": "स्वागत है",
+    "Personalized Guidance": "व्यक्तिगत मार्गदर्शन",
+    "Mindful Practices": "सचेत अभ्यास",
+    "Holistic Approach": "समग्र दृष्टिकोण",
+    "Follow Us on Instagram": "इंस्टाग्राम पर फॉलो करें",
+    "Visit Instagram": "इंस्टाग्राम देखें"
+  };
+
+  const reverseMap = Object.fromEntries(Object.entries(map).map(([en, hi]) => [hi, en]));
+
+  function translateTextContent(mapToUse) {
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    let node;
+    while ((node = walker.nextNode())) {
+      const original = node.nodeValue.trim();
+      if (original && mapToUse[original]) {
+        node.nodeValue = mapToUse[original];
+      }
+    }
+  }
+
+  const toggleClass = (id, className) => {
+    const btn = document.getElementById(id);
+    btn.classList.toggle("active");
+    document.body.classList.toggle(className);
+  };
+
+  const btn = document.getElementById("accessibility-btn");
+  const popup = document.getElementById("accessibility-popup");
+
+  btn.onclick = () => {
+    popupVisible = !popupVisible;
+    popup.style.display = popupVisible ? "block" : "none";
+  };
+
+  document.getElementById("font-plus").onclick = () => {
+    currentFontSize += 10;
+    document.body.style.fontSize = currentFontSize + "%";
+  };
+
+  document.getElementById("font-minus").onclick = () => {
+    currentFontSize = Math.max(50, currentFontSize - 10);
+    document.body.style.fontSize = currentFontSize + "%";
+  };
+
+  document.getElementById("font-reset").onclick = () => {
+    currentFontSize = 100;
+    document.body.style.fontSize = "100%";
+  };
+
+  document.getElementById("dark-mode-toggle").onclick = () =>
+    toggleClass("dark-mode-toggle", "dark-mode");
+
+  document.getElementById("underline-toggle").onclick = () =>
+    toggleClass("underline-toggle", "underline-links");
+
+  document.getElementById("translate-btn").onclick = () => {
+    if (!translated) {
+      translateTextContent(map);
+      translated = true;
+    } else {
+      translateTextContent(reverseMap);
+      translated = false;
+    }
+  };
+
+  document.getElementById("reading-line-toggle").onclick = () => {
+    const btn = document.getElementById("reading-line-toggle");
+    readingLineActive = !readingLineActive;
+    btn.classList.toggle("active");
+    const line = document.getElementById("reading-line");
+    if (readingLineActive) {
+      line.style.display = "block";
+      document.addEventListener("mousemove", moveLine);
+    } else {
+      line.style.display = "none";
+      document.removeEventListener("mousemove", moveLine);
+    }
+  };
+
+  function moveLine(e) {
+    const line = document.getElementById("reading-line");
+    line.style.top = e.clientY + "px";
+  }
+
+  document.getElementById("voice-toggle").onclick = () => {
+    const btn = document.getElementById("voice-toggle");
+    btn.classList.toggle("active");
+
+    if (!voiceRecognitionActive) {
+      startVoiceRecognition();
+      voiceRecognitionActive = true;
+    } else {
+      stopVoiceRecognition();
+      voiceRecognitionActive = false;
+    }
+  };
+
+  function startVoiceRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Voice recognition is not supported in this browser.");
+      return;
+    }
+
+    recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.continuous = true;
+
+    recognition.onresult = function (event) {
+      const command = event.results[event.results.length - 1][0].transcript.trim().toLowerCase();
+      console.log("Voice Command:", command);
+
+      if (command.includes("dark mode")) {
+        document.body.classList.add("dark-mode");
+      } else if (command.includes("light mode")) {
+        document.body.classList.remove("dark-mode");
+      } else if (command.includes("increase font")) {
+        currentFontSize += 10;
+        document.body.style.fontSize = currentFontSize + "%";
+      } else if (command.includes("decrease font")) {
+        currentFontSize = Math.max(50, currentFontSize - 10);
+        document.body.style.fontSize = currentFontSize + "%";
+      } else if (command.includes("reset font")) {
+        currentFontSize = 100;
+        document.body.style.fontSize = "100%";
+      }
+    };
+
+    recognition.start();
+  }
+
+  function stopVoiceRecognition() {
+    if (recognition) {
+      recognition.stop();
+    }
+  }
+</script>
