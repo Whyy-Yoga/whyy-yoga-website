@@ -10,20 +10,17 @@
   <link rel="stylesheet" href="nav-bar.css">
   <link rel="stylesheet" href="ai-pop-up-button.css">
   <style>
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
     body {
       background: linear-gradient(135deg, #fdfcfb, #e2d1c3);
       color: #333;
       line-height: 1.6;
     }
-    
     .logo {
       font-family: 'Sacramento', cursive;
       font-size: 40px;
@@ -56,24 +53,20 @@
       padding: 2rem 1rem;
       text-align: center;
     }
-
     .intro h1 {
       font-size: 2.5rem;
       color: #64b6ac;
     }
-
     .intro p {
       font-size: 1.1rem;
       margin-top: 0.5rem;
       color: #555;
     }
-
     .container {
       max-width: 1000px;
       margin: 2rem auto;
       padding: 0 1rem;
     }
-
     .section {
       margin-bottom: 2rem;
       padding: 2rem;
@@ -82,26 +75,21 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       transition: transform 0.3s ease;
     }
-
     .section:hover {
       transform: scale(1.02);
     }
-
     h2 {
       color: #64b6ac;
       margin-bottom: 1rem;
     }
-
     a {
       color: #c34c24;
       text-decoration: none;
       font-weight: bold;
     }
-
     a:hover {
       text-decoration: underline;
     }
-
     footer {
       text-align: center;
       padding: 1rem;
@@ -109,7 +97,6 @@
       background: #f4ede4;
       color: #666;
     }
-
     .button {
       margin-top: 1rem;
       padding: 10px 20px;
@@ -120,32 +107,27 @@
       cursor: pointer;
       transition: background 0.3s ease;
     }
-
     .button:hover {
       background: #aa600d;
     }
-     /* Flip animation on hover */
-     .flip-card:hover .flip-card-inner {
-      transform: rotateY(180deg);
-    }
-    
-    /* Optional: Make sure cards stack nicely on small screens */
     @media screen and (max-width: 600px) {
       .flip-card {
         width: 100% !important;
         max-width: 300px;
       }
     }
-    .img-yashaswi{
-      height:100px;
+    .img-yashaswi {
+      height: 100px;
       width: 100px;
       border-radius: 50px;
     }
-    .flip-card-inner.flip {
-  transform: rotateY(180deg);
-  transition: transform 1s ease;
-}
-
+    .flip-card-inner {
+      transition: transform 0.8s ease;
+      transform-style: preserve-3d;
+    }
+    .flip-card-inner.flipped {
+      transform: rotateY(180deg);
+    }
   </style>
 </head>
 <body>
@@ -300,64 +282,54 @@ A national debater and spiritual influencer, she has guided diverse groups acros
     &copy; 2025 Whyy Yoga. All rights reserved.
   </footer>
 
-  <script>
-    function goToInstagram() {
-      window.open('https://www.instagram.com/whyy_yoga/', '_blank');
-    }
-  </script>
-   <!-- Floating Ask Button -->
- <button id="gitaBotButton" onclick="openPopup()">
-  <img id="popup_button" src="krishna.jpg" alt=""></button>
-
-<!-- Popup Overlay -->
-<div id="popupOverlay">
-<button id="closePopup" onclick="closePopup()">×</button>
-<iframe id="gitaPopupFrame" src="shakhi-bot.html"></iframe>
-</div>
+  <!-- existing unchanged content -->
 
 <script>
-function openPopup() {
- const overlay = document.getElementById('popupOverlay');
- const iframe = document.getElementById('gitaPopupFrame');
- iframe.style.animation = 'popupIn 0.4s ease forwards';
- overlay.style.display = 'flex';
-}
-
-function closePopup() {
- document.getElementById('popupOverlay').style.display = 'none';
-}
+  function goToInstagram() {
+    window.open('https://www.instagram.com/whyy_yoga/', '_blank');
+  }
 </script>
 <script>
   function openNav() {
     document.getElementById("mySidenav").style.width = "250px";
     document.getElementById("overlay").style.display = "block";
   }
-
   function closeNav() {
     document.getElementById("mySidenav").style.width = "0";
     document.getElementById("overlay").style.display = "none";
   }
 </script>
 <script>
-  let cardsFlipped = false;
+  const flipCards = document.querySelectorAll('.flip-card-inner');
+  const flippedOnScroll = new Set();
 
+  // Auto flip on scroll once, flip back after 2s
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && !cardsFlipped) {
-        cardsFlipped = true;
-        document.querySelectorAll('.flip-card-inner').forEach((card, index) => {
-          setTimeout(() => {
-            card.classList.add('flip');
-          }, index * 500); // slight delay between each card
-        });
+    for (const entry of entries) {
+      const card = entry.target;
+      if (entry.isIntersecting && !flippedOnScroll.has(card)) {
+        card.classList.add('flipped');
+        flippedOnScroll.add(card);
+
+        setTimeout(() => {
+          card.classList.remove('flipped');
+        }, 2000);
+
+        break; // only one card flips per scroll event
       }
-    });
+    }
   }, {
     threshold: 0.4
   });
 
-  const section = document.querySelector("#about-us");
-  if (section) observer.observe(section);
+  flipCards.forEach(card => {
+    observer.observe(card);
+
+    // Manual click-to-flip
+    card.addEventListener('click', () => {
+      card.classList.toggle('flipped');
+    });
+  });
 </script>
 
 </body>
