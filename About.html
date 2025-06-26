@@ -141,6 +141,11 @@
       width: 100px;
       border-radius: 50px;
     }
+    .flip-card-inner.flip {
+  transform: rotateY(180deg);
+  transition: transform 1s ease;
+}
+
   </style>
 </head>
 <body>
@@ -173,7 +178,7 @@
 </div>
   <div class="intro margin">
     <h1>Welcome to Whyy Yoga</h1>
-    <p>Yoga that vibes with your soul, not just your scroll</p>
+    <p>Where Healing Begins and Wisdom Awakens the Soul</p>
   </div>
   
   <div class="container">
@@ -333,5 +338,27 @@ function closePopup() {
     document.getElementById("overlay").style.display = "none";
   }
 </script>
+<script>
+  let cardsFlipped = false;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !cardsFlipped) {
+        cardsFlipped = true;
+        document.querySelectorAll('.flip-card-inner').forEach((card, index) => {
+          setTimeout(() => {
+            card.classList.add('flip');
+          }, index * 500); // slight delay between each card
+        });
+      }
+    });
+  }, {
+    threshold: 0.4
+  });
+
+  const section = document.querySelector("#about-us");
+  if (section) observer.observe(section);
+</script>
+
 </body>
 </html>
